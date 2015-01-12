@@ -13,7 +13,7 @@ import com.proptiger.core.model.cms.Company;
  * 
  */
 
-public interface CompanyDao extends JpaRepository<Company, Integer> {
+public interface CompanyDao extends JpaRepository<Company, Integer>{
     @Query("SELECT DISTINCT C from Company C join C.coverages CC WHERE CC.localityId IN ?1 AND C.status = 'Active'")
     public List<Company> findBrokersForLocality(List<Integer> localityIds);
 }

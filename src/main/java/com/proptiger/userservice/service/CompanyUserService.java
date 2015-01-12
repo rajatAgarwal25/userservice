@@ -10,16 +10,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.proptiger.core.dto.internal.ActiveUser;
+import com.proptiger.core.enums.ActivationStatus;
 import com.proptiger.core.enums.ResourceType;
 import com.proptiger.core.enums.ResourceTypeAction;
 import com.proptiger.core.exception.BadRequestException;
 import com.proptiger.core.exception.ResourceNotAvailableException;
+import com.proptiger.core.model.cms.Company;
 import com.proptiger.core.model.cms.CompanyCoverage;
 import com.proptiger.core.model.cms.Locality;
 import com.proptiger.core.model.companyuser.CompanyUser;
 import com.proptiger.core.pojo.FIQLSelector;
 import com.proptiger.core.util.SecurityContextUtils;
 import com.proptiger.userservice.dto.UserDetails;
+import com.proptiger.userservice.repo.CompanyDao;
 import com.proptiger.userservice.repo.CompanyUserDao;
 
 /**
@@ -30,32 +33,38 @@ import com.proptiger.userservice.repo.CompanyUserDao;
  */
 @Service
 public class CompanyUserService {
+    
+    @Autowired
+    private CompanyDao     companyDao;
     @Autowired
     private CompanyUserDao companyUserDao;
+    
+    /**
+     * finds all broker companies which deal in one of the localities
+     * 
+     * @param localityIds
+     * @return {@link Company} {@link List}
+     */
+    public List<Company> getCompaniesForLocalitiesOrUserIds(List<Integer> localityIds, List<Integer> userIds) {
+        if(localityIds != null && !localityIds.isEmpty()){
+            return companyDao.findBrokersForLocality(localityIds);
+        }
+        else if(userIds != null && !userIds.isEmpty()){
+            return companyUserDao.findByUserId(userIds);
+        }
+        else{
+            throw new BadRequestException("Either localityIds or userIds is mandatory");
+        }
+    }
 
     /**
-     * Get a company user
+     * finds all users for a company
      * 
-     * @param companyUserId
-     * @return
+     * @param companyIds
+     * @return {@link CompanyUser} {@link List}
      */
-    public CompanyUser getAgent(Integer companyUserId, FIQLSelector selector) {
-        CompanyUser companyUser = companyUserDao.findByUserId(companyUserId);
-
-        if (companyUser == null) {
-            throw new ResourceNotAvailableException(ResourceType.COMPANY_USER, ResourceTypeAction.GET);
-        }
-
-        Set<String> fields = selector.getFieldSet();
-        if (fields.contains("localities")) {
-            CompanyUser companyUserFull = companyUserDao.findLocalitiesByUserId(companyUserId);
-            List<Locality> localities = new ArrayList<Locality>();
-            for (CompanyCoverage companyCoverage : companyUserFull.getCompanyCoverages()) {
-                localities.add(companyCoverage.getLocality());
-            }
-            companyUser.setLocalities(localities);
-        }
-        return companyUser;
+    public List<CompanyUser> getCompanyUsersForCompanies(Integer companyId) {
+        return companyUserDao.findByCompanyIdAndStatus(companyId, ActivationStatus.Active);
     }
 
     public CompanyUser getAgentDetails(Integer userId, FIQLSelector selector) {
@@ -83,6 +92,11 @@ public class CompanyUserService {
         return companyUser;
     }
 
+    /**
+     * Update left right values in hierarchy system for a company
+     * @param user
+     * @param activeUser
+     */
     public void updateLeftRightOfInCompany(UserDetails user, ActiveUser activeUser) {
         if (user.getParentId() != null && !(user.getParentId() <= 0) && SecurityContextUtils.isAdmin(activeUser)) {
             CompanyUser companyUser = companyUserDao.findByUserId(user.getId());
