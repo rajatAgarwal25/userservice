@@ -15,8 +15,8 @@ import com.proptiger.core.dto.internal.ActiveUser;
 import com.proptiger.core.enums.ActivationStatus;
 import com.proptiger.core.enums.Application;
 import com.proptiger.core.enums.Status;
+import com.proptiger.core.exception.AuthenticationExceptionImpl;
 import com.proptiger.core.model.companyuser.CompanyUser;
-import com.proptiger.userservice.exception.AuthenticationExceptionImpl;
 import com.proptiger.userservice.service.CompanyUserService;
 import com.proptiger.userservice.service.UserSubscriptionService;
 

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.proptiger.core.dto.internal.ActiveUser;
+import com.proptiger.core.dto.internal.user.CustomUser;
 import com.proptiger.core.enums.Application;
 import com.proptiger.core.meta.DisableCaching;
 import com.proptiger.core.model.user.User;
@@ -24,7 +25,6 @@ import com.proptiger.core.pojo.response.APIResponse;
 import com.proptiger.core.service.ApplicationNameService;
 import com.proptiger.core.util.Constants;
 import com.proptiger.userservice.dto.ChangePassword;
-import com.proptiger.userservice.dto.CustomUser;
 import com.proptiger.userservice.dto.RegisterUser;
 import com.proptiger.userservice.dto.UserDetails;
 import com.proptiger.userservice.service.CompanyUserService;
@@ -102,8 +102,8 @@ public class UserController extends BaseController {
     public APIResponse resetPasswordUsingToken(
             @RequestParam String token,
             @RequestBody ChangePassword changePassword) {
-        Object message = userService.resetPasswordUsingToken(token, changePassword);
-        return new APIResponse(message);
+        CustomUser customUser = userService.resetPasswordUsingToken(token, changePassword);
+        return new APIResponse(customUser);
     }
 
     /**

@@ -15,8 +15,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.proptiger.core.constants.ResponseCodes;
 import com.proptiger.core.constants.ResponseErrorMessages;
 import com.proptiger.core.dto.internal.ActiveUser;
+import com.proptiger.core.exception.AuthenticationExceptionImpl;
 import com.proptiger.core.util.SecurityContextUtils;
-import com.proptiger.userservice.exception.AuthenticationExceptionImpl;
 import com.proptiger.userservice.service.OTPService;
 
 /**

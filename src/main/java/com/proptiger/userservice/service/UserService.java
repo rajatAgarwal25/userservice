@@ -24,6 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.proptiger.core.constants.ResponseCodes;
 import com.proptiger.core.constants.ResponseErrorMessages;
 import com.proptiger.core.dto.internal.ActiveUser;
+import com.proptiger.core.dto.internal.user.CustomUser;
+import com.proptiger.core.dto.internal.user.CustomUser.UserAppDetail;
+import com.proptiger.core.dto.internal.user.CustomUser.UserAppDetail.CustomCity;
+import com.proptiger.core.dto.internal.user.CustomUser.UserAppDetail.CustomLocality;
+import com.proptiger.core.dto.internal.user.CustomUser.UserAppDetail.UserAppSubscription;
 import com.proptiger.core.enums.Application;
 import com.proptiger.core.enums.AuthProvider;
 import com.proptiger.core.enums.DomainObject;
@@ -60,11 +65,6 @@ import com.proptiger.core.util.PropertyReader;
 import com.proptiger.core.util.SecurityContextUtils;
 import com.proptiger.core.util.UtilityClass;
 import com.proptiger.userservice.dto.ChangePassword;
-import com.proptiger.userservice.dto.CustomUser;
-import com.proptiger.userservice.dto.CustomUser.UserAppDetail;
-import com.proptiger.userservice.dto.CustomUser.UserAppDetail.CustomCity;
-import com.proptiger.userservice.dto.CustomUser.UserAppDetail.CustomLocality;
-import com.proptiger.userservice.dto.CustomUser.UserAppDetail.UserAppSubscription;
 import com.proptiger.userservice.dto.RegisterUser;
 import com.proptiger.userservice.dto.ResetPasswordTemplateData;
 import com.proptiger.userservice.dto.UserDetails;
@@ -530,7 +530,7 @@ public class UserService {
      * @param token 
      * @return
      */
-    public Object resetPasswordUsingToken(String token, ChangePassword changePassword) {
+    public CustomUser resetPasswordUsingToken(String token, ChangePassword changePassword) {
         ForumUserToken forumUserToken = userTokenService.getTokenDetailsAfterValidation(token);
         String encodedPass = PasswordUtils.validateNewAndConfirmPassword(
                 changePassword.getNewPassword(),

@@ -41,7 +41,7 @@ public class CompanyUserController extends BaseController {
 
     @RequestMapping(value = "data/v1/entity/company-users/{userId}")
     @ResponseBody
-    public APIResponse getCompanyUsers(@ModelAttribute FIQLSelector selector, @PathVariable Integer userId) {
+    public APIResponse getCompanyUser(@ModelAttribute FIQLSelector selector, @PathVariable Integer userId) {
         CompanyUser agent = companyUserService.getAgentDetails(userId, selector);
         return new APIResponse(super.filterFieldsFromSelector(agent, selector));
     }
