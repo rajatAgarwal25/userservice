@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.proptiger.core.dto.internal.ActiveUser;
 import com.proptiger.core.util.SecurityContextUtils;
-import com.proptiger.userservice.mvc.UserController;
+import com.proptiger.userservice.mvc.AppUserController;
 import com.proptiger.userservice.service.OTPService;
 
 /**
@@ -30,7 +30,7 @@ import com.proptiger.userservice.service.OTPService;
  */
 public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     @Autowired
-    private UserController userController;
+    private AppUserController appUserController;
 
     @Autowired
     private OTPService     otpService;
@@ -51,9 +51,9 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                 "fieldFilter",
                 SimpleBeanPropertyFilter.serializeAllExcept(new HashSet<String>()));
 
-        ObjectMapper mapper = userController.getMapper();
+        ObjectMapper mapper = appUserController.getMapper();
         response.getWriter().print(
                 mapper.writer(filterProvider).writeValueAsString(
-                        userController.getUserDetails(activeUser)));
+                        appUserController.getUserDetails(activeUser)));
     }
 }
