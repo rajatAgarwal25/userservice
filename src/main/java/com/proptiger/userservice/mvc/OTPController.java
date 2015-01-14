@@ -42,8 +42,7 @@ public class OTPController extends BaseController{
     @ResponseBody
     public APIResponse getOTP(
             @ModelAttribute(Constants.LOGIN_INFO_OBJECT_NAME) ActiveUser activeUser) {
-        otpService.respondWithOTP(activeUser);;
-        return new APIResponse("New OTP has been sent to your registered email");
+        return new APIResponse(otpService.respondWithOTP(activeUser));
     }
 
 }
