@@ -2,6 +2,7 @@ package com.proptiger.userservice.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -762,15 +763,25 @@ public class UserService {
         return contactNumbersOfUser;
     }
 
-    public User getUserWithContactNumberById(int Id) {
-        return userDao.findByUserIdWithContactAndAuthProviderDetails(Id);
+    public User getUserWithContactAuthProviderAndAttribute(Collection<Integer> userIds) {
+        if(userIds != null && !userIds.isEmpty()){
+            return userDao.findByUserIdInWithContactAuthProviderAndAttribute(userIds);
+        }
+        throw new BadRequestException("Invalid list of user ids");
     }
 
+    
+    public User getUserByEmailWithContactAuthProviderAndAttribute(String email) {
+        if(email == null || email.isEmpty()){
+            throw new BadRequestException("Invalid email id");
+        }
+        return userDao.findByEmailInWithContactAuthProviderAndAttribute(email);
+    }
     public User getUserById(int userId) {
         return userDao.findOne(userId);
     }
 
-    public Map<Integer, User> getUsers(Set<Integer> userIds) {
+    public Map<Integer, User> getUsers(Collection<Integer> userIds) {
         Map<Integer, User> usersMap = new HashMap<>();
         if (userIds != null && !userIds.isEmpty()) {
             List<User> users = userDao.findByIdIn(userIds);

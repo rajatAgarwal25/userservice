@@ -1,7 +1,7 @@
 package com.proptiger.userservice.repo;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -35,6 +35,13 @@ public interface UserDao extends JpaRepository<User, Integer>, UserCustomDao {
     @Query("select U from User U left join fetch U.contactNumbers CN left join fetch U.userAuthProviderDetails where U.id = ?1")
     public User findByUserIdWithContactAndAuthProviderDetails(int id);
 
-    public List<User> findByIdIn(Set<Integer> userIds);
+    @Query("select U from User U left join fetch U.contactNumbers CN left join fetch U.userAuthProviderDetails AP left join fetch U.attributes A where U.id in ?1")
+    public User findByUserIdInWithContactAuthProviderAndAttribute(Collection<Integer> userIds);
+
+    @Query("select U from User U left join fetch U.contactNumbers CN left join fetch U.userAuthProviderDetails AP left join fetch U.attributes A where U.email= ?1")
+    public User findByEmailInWithContactAuthProviderAndAttribute(String email);
+
+    
+    public List<User> findByIdIn(Collection<Integer> userIds);
     
 }

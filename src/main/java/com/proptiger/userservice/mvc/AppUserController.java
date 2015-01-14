@@ -17,10 +17,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.proptiger.core.dto.internal.ActiveUser;
 import com.proptiger.core.dto.internal.user.CustomUser;
+import com.proptiger.core.meta.DisableCaching;
 import com.proptiger.core.model.user.User;
 import com.proptiger.core.mvc.BaseController;
 import com.proptiger.core.pojo.response.APIResponse;
 import com.proptiger.core.util.Constants;
+import com.proptiger.userservice.config.security.APIAccessLevel;
+import com.proptiger.userservice.config.security.AccessLevel;
 import com.proptiger.userservice.dto.ChangePassword;
 import com.proptiger.userservice.dto.UserDetails;
 import com.proptiger.userservice.service.CompanyUserService;
@@ -32,6 +35,7 @@ import com.proptiger.userservice.service.UserService.UserCommunicationType;
  *
  */
 @Controller
+@DisableCaching
 public class AppUserController extends BaseController{
 
     @Value("${proptiger.url}")
@@ -68,14 +72,9 @@ public class AppUserController extends BaseController{
         return new APIResponse(customUser);
     }
 
-    /**
-     * Accesible by users having role UserRole.ADMIN_BACKEND
-     * 
-     * @param email
-     * @return
-     */
     @RequestMapping(value = "app/v1/user/details-by-email", method = RequestMethod.GET)
     @ResponseBody
+    @APIAccessLevel(level = {AccessLevel.INTERNAL_IP, AccessLevel.CALLER_LOGIN, AccessLevel.CALLER_NON_LOGIN})
     public APIResponse getUserDetailsByEmailId(@RequestParam String email) {
         CustomUser customUser = userService.getUserDetailsByEmail(email);
         return new APIResponse(customUser);

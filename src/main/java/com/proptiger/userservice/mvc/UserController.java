@@ -1,6 +1,7 @@
 package com.proptiger.userservice.mvc;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.proptiger.core.dto.internal.ActiveUser;
@@ -18,6 +20,8 @@ import com.proptiger.core.mvc.BaseController;
 import com.proptiger.core.pojo.response.APIResponse;
 import com.proptiger.core.service.ApplicationNameService;
 import com.proptiger.core.util.Constants;
+import com.proptiger.userservice.config.security.APIAccessLevel;
+import com.proptiger.userservice.config.security.AccessLevel;
 import com.proptiger.userservice.dto.ChangePassword;
 import com.proptiger.userservice.dto.RegisterUser;
 import com.proptiger.userservice.service.CompanyUserService;
@@ -79,4 +83,28 @@ public class UserController extends BaseController {
         return new APIResponse(userService.getUserById(activeUser.getUserIdentifier()));
     }
 
+    @RequestMapping(value = "data/v1/entity/user", method = RequestMethod.GET, params = {"userId"})
+    @ResponseBody
+    @APIAccessLevel(level = {AccessLevel.INTERNAL_IP, AccessLevel.CALLER_LOGIN})
+    public APIResponse getUsersByUserIds(
+            @ModelAttribute(Constants.LOGIN_INFO_OBJECT_NAME) ActiveUser activeUser,
+            @RequestParam(required = true) List<Integer> userId) throws IOException {
+        return new APIResponse(userService.getUsers(userId));
+    }
+    
+    @RequestMapping(value = "data/v1/entity/user-details", method = RequestMethod.GET, params = {"userId"})
+    @ResponseBody
+    @APIAccessLevel(level = {AccessLevel.INTERNAL_IP, AccessLevel.CALLER_LOGIN, AccessLevel.CALLER_NON_LOGIN})
+    public APIResponse getUserDetailsByUserIds(
+            @RequestParam(required = true) List<Integer> userId) throws IOException {
+        return new APIResponse(userService.getUserWithContactAuthProviderAndAttribute(userId));
+    }
+
+    @RequestMapping(value = "data/v1/entity/user-details", method = RequestMethod.GET, params = {"email"})
+    @ResponseBody
+    @APIAccessLevel(level = {AccessLevel.INTERNAL_IP, AccessLevel.CALLER_LOGIN, AccessLevel.CALLER_NON_LOGIN})
+    public APIResponse getUserDetailsByEmail(
+            @RequestParam(required = true) String email) throws IOException {
+        return new APIResponse(userService.getUserByEmailWithContactAuthProviderAndAttribute(email));
+    }
 }
