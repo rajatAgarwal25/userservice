@@ -2,6 +2,8 @@ package com.proptiger.userservice.dto;
 
 import java.util.List;
 
+import com.proptiger.core.dto.internal.user.RegisterUser;
+
 /**
  * @author Rajeev Pandey
  *

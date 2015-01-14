@@ -7,10 +7,10 @@ import org.apache.commons.validator.routines.EmailValidator;
 
 import com.proptiger.core.constants.ResponseCodes;
 import com.proptiger.core.constants.ResponseErrorMessages;
+import com.proptiger.core.dto.internal.user.RegisterUser;
 import com.proptiger.core.exception.BadRequestException;
 import com.proptiger.core.model.user.UserContactNumber;
 import com.proptiger.core.util.Constants;
-import com.proptiger.userservice.dto.RegisterUser;
 
 /**
  * Util class to validate user registration data

@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.proptiger.core.dto.internal.ActiveUser;
+import com.proptiger.core.dto.internal.user.RegisterUser;
 import com.proptiger.core.enums.Application;
 import com.proptiger.core.meta.DisableCaching;
+import com.proptiger.core.model.user.User;
 import com.proptiger.core.mvc.BaseController;
 import com.proptiger.core.pojo.response.APIResponse;
 import com.proptiger.core.service.ApplicationNameService;
@@ -23,7 +25,6 @@ import com.proptiger.core.util.Constants;
 import com.proptiger.userservice.config.security.APIAccessLevel;
 import com.proptiger.userservice.config.security.AccessLevel;
 import com.proptiger.userservice.dto.ChangePassword;
-import com.proptiger.userservice.dto.RegisterUser;
 import com.proptiger.userservice.service.CompanyUserService;
 import com.proptiger.userservice.service.UserService;
 
@@ -107,4 +108,13 @@ public class UserController extends BaseController {
             @RequestParam(required = true) String email) throws IOException {
         return new APIResponse(userService.getUserByEmailWithContactAuthProviderAndAttribute(email));
     }
+    
+    @RequestMapping(value = "data/v1/entity/user", method = RequestMethod.POST)
+    @ResponseBody
+    @APIAccessLevel(level = {AccessLevel.INTERNAL_IP, AccessLevel.CALLER_LOGIN, AccessLevel.CALLER_NON_LOGIN})
+    public APIResponse createOrPatchUser(
+            @RequestBody User user) throws IOException {
+        return new APIResponse(userService.createOrPatchUser(user));
+    }
+    
 }

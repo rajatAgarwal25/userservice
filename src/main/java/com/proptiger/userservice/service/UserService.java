@@ -26,6 +26,7 @@ import com.proptiger.core.constants.ResponseCodes;
 import com.proptiger.core.constants.ResponseErrorMessages;
 import com.proptiger.core.dto.internal.ActiveUser;
 import com.proptiger.core.dto.internal.user.CustomUser;
+import com.proptiger.core.dto.internal.user.RegisterUser;
 import com.proptiger.core.dto.internal.user.CustomUser.UserAppDetail;
 import com.proptiger.core.dto.internal.user.CustomUser.UserAppDetail.CustomCity;
 import com.proptiger.core.dto.internal.user.CustomUser.UserAppDetail.CustomLocality;
@@ -66,7 +67,6 @@ import com.proptiger.core.util.PropertyReader;
 import com.proptiger.core.util.SecurityContextUtils;
 import com.proptiger.core.util.UtilityClass;
 import com.proptiger.userservice.dto.ChangePassword;
-import com.proptiger.userservice.dto.RegisterUser;
 import com.proptiger.userservice.dto.ResetPasswordTemplateData;
 import com.proptiger.userservice.dto.UserDetails;
 import com.proptiger.userservice.repo.CompanyDao;
@@ -605,7 +605,7 @@ public class UserService {
         return discussionSubscriptionDao.save(discussionSubscription);
     }
 
-    public User createUser(User user) {
+    public User createOrPatchUser(User user) {
         String email = user.getEmail();
         User userInDB = userDao.findByEmail(email);
 
@@ -625,14 +625,6 @@ public class UserService {
         return user;
     }
     
-    public User findOrCreateUser(User user) {
-        if (user.getId() != 0) {
-            return userDao.findOne(user.getId());
-        } else {
-            return createUser(user);
-        }
-    }
-
     /**
      * 
      * @param user
