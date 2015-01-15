@@ -99,9 +99,8 @@ public class AppSecurityConfig<S extends ExpiringSession> extends WebSecurityCon
         http.csrf().disable();
 
         http.authorizeRequests()
-                .regexMatchers(Constants.Security.USER_DETAIL_API_REGEX).anonymous()
+                .regexMatchers(Constants.Security.USER_DETAIL_API_REGEX).permitAll()
                 .regexMatchers(Constants.Security.USER_ROLE_API_REGEX).access("hasRole('" + UserRole.Admin.name() + "')")
-                //.regexMatchers(Constants.Security.USER_DETAIL_API_REGEX).access("hasRole('" + UserRole.Admin.name() + "')")
                 .regexMatchers(Constants.Security.USER_API_REGEX).access("hasRole('" + UserRole.USER.name() + "')")
                 .regexMatchers(Constants.Security.USER_API_REGEX).access("hasRole('" + UserRole.Admin.name() + "')")
                 .regexMatchers(Constants.Security.OTP_VALIDATE_API_REGEX).access("hasRole('" + UserRole.PRE_AUTH_USER.name() + "')")

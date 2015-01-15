@@ -156,8 +156,8 @@ public class UserService {
     @Autowired
     private ExternalAPICallService externalAPICallService;
     
-    public Integer val = 0;
-    public String test;
+    @Autowired
+    private DashboardService dashboardService;
     
     public boolean isRegistered(String email) {
         User user = userDao.findByEmail(email);
@@ -198,7 +198,7 @@ public class UserService {
         String profileImage = getUserProfileImageUrl(user.getId());
         customUser.setProfileImageUrl(profileImage);
         if (needDashboards) {
-            List<Dashboard> dashboards = externalAPICallService.getDashboardOfActiveUser();
+            List<Dashboard> dashboards = dashboardService.getAllByUserIdAndType(user.getId(), new FIQLSelector());
             customUser.setDashboards(dashboards);
         }
 
