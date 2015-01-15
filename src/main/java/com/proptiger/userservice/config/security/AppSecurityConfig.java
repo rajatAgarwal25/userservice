@@ -142,7 +142,7 @@ public class AppSecurityConfig<S extends ExpiringSession> extends WebSecurityCon
     @Bean(name = "springSessionRepositoryFilter")
     public SessionRepositoryFilter<? extends ExpiringSession> createSessionRepositoryFilter() {
         final SessionRepositoryFilter<S> sessionRepositoryFilter = new SessionRepositoryFilter<S>(sessionRepository);
-        CookieHttpSessionStrategy httpSessionStrategy = new CookieHttpSessionStrategy();
+        CustomCookieHttpSessionStrategy httpSessionStrategy = new CustomCookieHttpSessionStrategy();
         httpSessionStrategy.setCookieName(Constants.JSESSIONID);
         sessionRepositoryFilter.setHttpSessionStrategy(httpSessionStrategy);
         return sessionRepositoryFilter;

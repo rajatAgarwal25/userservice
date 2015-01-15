@@ -48,6 +48,16 @@ public class RedisAndDBOperationsSessionRepository extends RedisOperationsSessio
         databaseSessionOperations.delete(sessionId);
     }
 
+    public ActiveUser getActiveUserFromSession(String jsessionId){
+        RedisSession session = getSession(jsessionId);
+        if(session != null){
+            Object principle = session.getAttribute(Constants.LOGIN_INFO_OBJECT_NAME);
+            if(principle instanceof ActiveUser){
+                return (ActiveUser)principle;
+            }
+        }
+        return null;
+    }
     @Override
     public RedisSession getSession(String id) {
         RedisSession result = super.getSession(id);

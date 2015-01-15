@@ -169,7 +169,7 @@ public class UserService {
     }
 
     /**
-     * Returns details forum user object for a user including all his dashboards
+     * Returns details forum user object for a user including all his dashboard
      * and preferences and subscription details
      * 
      * @param userInfo

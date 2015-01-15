@@ -1,8 +1,11 @@
 package com.proptiger.userservice.service;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -29,7 +32,8 @@ public class ExternalAPICallService {
     private static final String URL_TREND_V1    = "app/v1/trend";
     private static final String URL_B2B_ATTRIBUTE = "data/v1/entity/b2b/attribute?attributeName=";
     private static final String URL_NOTIFICATION = "data/v1/entity/notification/sender";
-
+    
+    private static Logger                    logger = LoggerFactory.getLogger(ExternalAPICallService.class);
     @Autowired
     private HttpRequestUtil     httpRequestUtil;
 
@@ -42,7 +46,13 @@ public class ExternalAPICallService {
     public List<Dashboard> getDashboardOfActiveUser() {
         String stringUrl = PropertyReader.getRequiredPropertyAsString(PropertyKeys.PROPTIGER_URL) + URL_DASHBOARD;
         HttpHeaders requestHeaders = createJsessionIdHeader();
-        return httpRequestUtil.getInternalApiResultAsTypeList(URI.create(stringUrl), requestHeaders, Dashboard.class);
+        try {
+            return httpRequestUtil.getInternalApiResultAsTypeList(URI.create(stringUrl), requestHeaders, Dashboard.class);
+        }
+        catch (Exception e) {
+            logger.error("Exception while getting dashboard of user ",e);;
+        }
+        return new ArrayList<Dashboard>();
     }
 
     public List<Trend> getTrend(FIQLSelector selector) {
