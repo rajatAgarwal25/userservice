@@ -7,7 +7,6 @@ import org.springframework.session.data.redis.RedisAndDBOperationsSessionReposit
 import org.springframework.stereotype.Service;
 
 import com.proptiger.core.dto.internal.ActiveUser;
-import com.proptiger.core.util.Constants;
 import com.proptiger.core.util.RequestHolderUtil;
 
 /**
@@ -16,18 +15,15 @@ import com.proptiger.core.util.RequestHolderUtil;
  */
 @Service
 public class UserSessionService {
-    
+
     @Autowired
     private RedisAndDBOperationsSessionRepository redisAndDBOperationsSessionRepository;
 
-    public ActiveUser getActiveSessionOfRequest(HttpServletRequest request){
+    public ActiveUser getActiveSessionOfRequest(HttpServletRequest request) {
         String jsessionId = RequestHolderUtil.getJsessionIdFromRequestCookie();
-        if(jsessionId != null && !jsessionId.isEmpty()){
-            ActiveUser activeUser =  redisAndDBOperationsSessionRepository.getActiveUserFromSession(jsessionId);
+        if (jsessionId != null && !jsessionId.isEmpty()) {
+            ActiveUser activeUser = redisAndDBOperationsSessionRepository.getActiveUserFromSession(jsessionId);
             return activeUser;
-        }
-        else{
-            
         }
         return null;
     }
