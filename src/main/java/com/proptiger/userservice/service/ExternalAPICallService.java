@@ -19,6 +19,7 @@ import com.proptiger.core.util.HttpRequestUtil;
 import com.proptiger.core.util.PropertyKeys;
 import com.proptiger.core.util.PropertyReader;
 import com.proptiger.core.util.RequestHolderUtil;
+import com.proptiger.userservice.util.UserServiceConstants;
 
 /**
  * @author Rajeev Pandey
@@ -27,50 +28,50 @@ import com.proptiger.core.util.RequestHolderUtil;
 @Service
 public class ExternalAPICallService {
 
-    private static final String URL_DASHBOARD = "data/v1/entity/user/1/dashboard";
-    private static final String URL_LOCALITY_V4 = "data/v4/entity/locality";
-    private static final String URL_TREND_V1    = "app/v1/trend";
-    private static final String URL_B2B_ATTRIBUTE = "data/v1/entity/b2b/attribute?attributeName=";
-    private static final String URL_NOTIFICATION = "data/v1/entity/notification/sender";
-    
-    private static Logger                    logger = LoggerFactory.getLogger(ExternalAPICallService.class);
+    private static Logger   logger = LoggerFactory.getLogger(ExternalAPICallService.class);
     @Autowired
-    private HttpRequestUtil     httpRequestUtil;
+    private HttpRequestUtil httpRequestUtil;
 
     public List<Locality> getLocalities(FIQLSelector selector) {
         return httpRequestUtil.getInternalApiResultAsTypeList(
-                getCompleteURIUsingSelector(URL_LOCALITY_V4, selector),
+                getCompleteURIUsingSelector(
+                        PropertyReader.getRequiredPropertyAsString(UserServiceConstants.URL_LOCALITY_V4),
+                        selector),
                 Locality.class);
     }
 
     public List<Dashboard> getDashboardOfActiveUser() {
-        String stringUrl = PropertyReader.getRequiredPropertyAsString(PropertyKeys.PROPTIGER_URL) + URL_DASHBOARD;
+        String stringUrl = PropertyReader.getRequiredPropertyAsString(PropertyKeys.PROPTIGER_URL) + PropertyReader
+                .getRequiredPropertyAsString(UserServiceConstants.URL_DASHBOARD);
         HttpHeaders requestHeaders = createJsessionIdHeader();
         try {
-            return httpRequestUtil.getInternalApiResultAsTypeList(URI.create(stringUrl), requestHeaders, Dashboard.class);
+            return httpRequestUtil.getInternalApiResultAsTypeList(
+                    URI.create(stringUrl),
+                    requestHeaders,
+                    Dashboard.class);
         }
         catch (Exception e) {
-            logger.error("Exception while getting dashboard of user ",e);;
+            logger.error("Exception while getting dashboard of user ", e);
+            ;
         }
         return new ArrayList<Dashboard>();
     }
 
     public List<Trend> getTrend(FIQLSelector selector) {
         return httpRequestUtil.getInternalApiResultAsTypeList(
-                getCompleteURIUsingSelector(URL_TREND_V1, selector),
+                getCompleteURIUsingSelector(
+                        PropertyReader.getRequiredPropertyAsString(UserServiceConstants.URL_TREND_V1),
+                        selector),
                 Trend.class);
 
     }
 
-    public String getB2bAttributeByName(String attributeName){
-        String stringUrl = PropertyReader.getRequiredPropertyAsString(PropertyKeys.PROPTIGER_URL) + URL_B2B_ATTRIBUTE+attributeName;
+    public String getB2bAttributeByName(String attributeName) {
+        String stringUrl = PropertyReader.getRequiredPropertyAsString(PropertyKeys.PROPTIGER_URL) + PropertyReader
+                .getRequiredPropertyAsString(UserServiceConstants.URL_B2B_ATTRIBUTE) + attributeName;
         return httpRequestUtil.getInternalApiResultAsTypeFromCache(URI.create(stringUrl), String.class);
     }
-    
-    public void sendNewUserRegistrationNotification(int userId){
-        
-    }
-    
+
     private HttpHeaders createJsessionIdHeader() {
         HttpHeaders requestHeaders = new HttpHeaders();
         String jsessionId = RequestHolderUtil.getJsessionIdFromRequestCookie();

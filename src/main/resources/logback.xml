@@ -33,7 +33,7 @@
 		<level value="ERROR" />
 	</logger>
 	<logger name="com.proptiger.userservice">
-		<level value="DEBUG" />
+		<level value="ERROR" />
 	</logger>
 	<root level="INFO">
 		<appender-ref ref="userservice" />
