@@ -50,7 +50,6 @@ import org.springframework.session.ExpiringSession;
 import org.springframework.session.SessionRepository;
 import org.springframework.session.data.redis.DatabaseSessionOperations;
 import org.springframework.session.data.redis.RedisAndDBOperationsSessionRepository;
-import org.springframework.session.web.http.CookieHttpSessionStrategy;
 import org.springframework.session.web.http.SessionRepositoryFilter;
 import org.springframework.web.filter.GenericFilterBean;
 

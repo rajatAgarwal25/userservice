@@ -36,7 +36,7 @@ public interface UserDao extends JpaRepository<User, Integer>, UserCustomDao {
     public User findByUserIdWithContactAndAuthProviderDetails(int id);
 
     @Query("select U from User U left join fetch U.contactNumbers CN left join fetch U.userAuthProviderDetails AP left join fetch U.attributes A where U.id in ?1")
-    public User findByUserIdInWithContactAuthProviderAndAttribute(Collection<Integer> userIds);
+    public List<User> findByUserIdInWithContactAuthProviderAndAttribute(Collection<Integer> userIds);
 
     @Query("select U from User U left join fetch U.contactNumbers CN left join fetch U.userAuthProviderDetails AP left join fetch U.attributes A where U.email= ?1")
     public User findByEmailInWithContactAuthProviderAndAttribute(String email);

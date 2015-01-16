@@ -605,6 +605,7 @@ public class UserService {
         return discussionSubscriptionDao.save(discussionSubscription);
     }
 
+    @Transactional
     public User createOrPatchUser(User user) {
         String email = user.getEmail();
         User userInDB = userDao.findByEmail(email);
@@ -755,24 +756,27 @@ public class UserService {
         return contactNumbersOfUser;
     }
 
-    public User getUserWithContactAuthProviderAndAttribute(Collection<Integer> userIds) {
+    @Transactional
+    public List<User> getUserWithContactAuthProviderAndAttribute(Collection<Integer> userIds) {
         if(userIds != null && !userIds.isEmpty()){
             return userDao.findByUserIdInWithContactAuthProviderAndAttribute(userIds);
         }
         throw new BadRequestException("Invalid list of user ids");
     }
 
-    
+    @Transactional
     public User getUserByEmailWithContactAuthProviderAndAttribute(String email) {
         if(email == null || email.isEmpty()){
             throw new BadRequestException("Invalid email id");
         }
         return userDao.findByEmailInWithContactAuthProviderAndAttribute(email);
     }
+    @Transactional
     public User getUserById(int userId) {
-        return userDao.findOne(userId);
+        return userDao.findByIdWithRoles(userId);
     }
 
+    @Transactional
     public Map<Integer, User> getUsers(Collection<Integer> userIds) {
         Map<Integer, User> usersMap = new HashMap<>();
         if (userIds != null && !userIds.isEmpty()) {

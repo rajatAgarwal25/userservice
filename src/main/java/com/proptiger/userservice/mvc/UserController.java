@@ -1,6 +1,7 @@
 package com.proptiger.userservice.mvc;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +82,8 @@ public class UserController extends BaseController {
     @ResponseBody
     public APIResponse getActiveUser(@ModelAttribute(Constants.LOGIN_INFO_OBJECT_NAME) ActiveUser activeUser)
             throws IOException {
-        return new APIResponse(userService.getUserById(activeUser.getUserIdentifier()));
+        User user = userService.getUserById(activeUser.getUserIdentifier());
+        return new APIResponse(user);
     }
 
     @RequestMapping(value = "data/v1/entity/user", method = RequestMethod.GET, params = {"userId"})
@@ -90,7 +92,7 @@ public class UserController extends BaseController {
     public APIResponse getUsersByUserIds(
             @ModelAttribute(Constants.LOGIN_INFO_OBJECT_NAME) ActiveUser activeUser,
             @RequestParam(required = true) List<Integer> userId) throws IOException {
-        return new APIResponse(userService.getUsers(userId));
+        return new APIResponse(super.filterFields(userService.getUsers(userId), new HashSet<String>()));
     }
     
     @RequestMapping(value = "data/v1/entity/user-details", method = RequestMethod.GET, params = {"userId"})
@@ -98,7 +100,8 @@ public class UserController extends BaseController {
     @APIAccessLevel(level = {AccessLevel.INTERNAL_IP, AccessLevel.CALLER_LOGIN, AccessLevel.CALLER_NON_LOGIN})
     public APIResponse getUserDetailsByUserIds(
             @RequestParam(required = true) List<Integer> userId) throws IOException {
-        return new APIResponse(userService.getUserWithContactAuthProviderAndAttribute(userId));
+        List<User> users = userService.getUserWithContactAuthProviderAndAttribute(userId);
+        return new APIResponse(super.filterFields(users, new HashSet<String>()));
     }
 
     @RequestMapping(value = "data/v1/entity/user-details", method = RequestMethod.GET, params = {"email"})
@@ -106,7 +109,8 @@ public class UserController extends BaseController {
     @APIAccessLevel(level = {AccessLevel.INTERNAL_IP, AccessLevel.CALLER_LOGIN, AccessLevel.CALLER_NON_LOGIN})
     public APIResponse getUserDetailsByEmail(
             @RequestParam(required = true) String email) throws IOException {
-        return new APIResponse(userService.getUserByEmailWithContactAuthProviderAndAttribute(email));
+        User user = userService.getUserByEmailWithContactAuthProviderAndAttribute(email);
+        return new APIResponse(super.filterFields(user, new HashSet<String>()));
     }
     
     @RequestMapping(value = "data/v1/entity/user", method = RequestMethod.POST)
@@ -114,7 +118,7 @@ public class UserController extends BaseController {
     @APIAccessLevel(level = {AccessLevel.INTERNAL_IP, AccessLevel.CALLER_LOGIN, AccessLevel.CALLER_NON_LOGIN})
     public APIResponse createOrPatchUser(
             @RequestBody User user) throws IOException {
-        return new APIResponse(userService.createOrPatchUser(user));
+        return new APIResponse(super.filterFields(userService.createOrPatchUser(user), new HashSet<String>()));
     }
     
 }
