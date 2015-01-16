@@ -776,8 +776,7 @@ public class UserService {
         return userDao.findByIdWithRoles(userId);
     }
 
-    @Transactional
-    public Map<Integer, User> getUsers(Collection<Integer> userIds) {
+    private Map<Integer, User> getUsers(Collection<Integer> userIds) {
         Map<Integer, User> usersMap = new HashMap<>();
         if (userIds != null && !userIds.isEmpty()) {
             List<User> users = userDao.findByIdIn(userIds);
@@ -788,6 +787,12 @@ public class UserService {
         return usersMap;
     }
 
+    public List<User> getUsersByIds(Collection<Integer> userIds){
+        if (userIds != null && !userIds.isEmpty()) {
+            return userDao.findByIdIn(userIds);
+        }
+        return new ArrayList<User>();
+    }
     public UserContactNumber getTopPriorityContact(int userId) {
         List<UserContactNumber> contacts = contactNumberDao.findByUserIdOrderByPriorityAsc(userId);
         if (contacts.isEmpty()) {

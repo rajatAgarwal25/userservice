@@ -2,7 +2,9 @@ package com.proptiger.userservice.mvc;
 
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.proptiger.core.dto.internal.ActiveUser;
+import com.proptiger.core.dto.internal.user.CustomUser;
 import com.proptiger.core.dto.internal.user.RegisterUser;
 import com.proptiger.core.enums.Application;
 import com.proptiger.core.meta.DisableCaching;
@@ -26,8 +29,10 @@ import com.proptiger.core.util.Constants;
 import com.proptiger.userservice.config.security.APIAccessLevel;
 import com.proptiger.userservice.config.security.AccessLevel;
 import com.proptiger.userservice.dto.ChangePassword;
+import com.proptiger.userservice.dto.UserDetails;
 import com.proptiger.userservice.service.CompanyUserService;
 import com.proptiger.userservice.service.UserService;
+import com.proptiger.userservice.service.UserService.UserCommunicationType;
 
 /**
  * User APIs to get/register/update/delete a user entity
@@ -86,39 +91,60 @@ public class UserController extends BaseController {
         return new APIResponse(user);
     }
 
-    @RequestMapping(value = "data/v1/entity/user", method = RequestMethod.GET, params = {"userId"})
+    @RequestMapping(method = RequestMethod.GET, value = "/app/v1/user/details")
     @ResponseBody
-    @APIAccessLevel(level = {AccessLevel.INTERNAL_IP, AccessLevel.CALLER_LOGIN})
-    public APIResponse getUsersByUserIds(
-            @ModelAttribute(Constants.LOGIN_INFO_OBJECT_NAME) ActiveUser activeUser,
-            @RequestParam(required = true) List<Integer> userId) throws IOException {
-        return new APIResponse(super.filterFields(userService.getUsers(userId), new HashSet<String>()));
+    public APIResponse getUserDetails(@ModelAttribute(Constants.LOGIN_INFO_OBJECT_NAME) ActiveUser activeUser) {
+        return new APIResponse(userService.getUserDetails(
+                activeUser.getUserIdentifier(),
+                activeUser.getApplicationType(), true));
     }
     
-    @RequestMapping(value = "data/v1/entity/user-details", method = RequestMethod.GET, params = {"userId"})
+    @RequestMapping(value = "app/v1/reset-password", method = RequestMethod.POST, params = {"email"})
     @ResponseBody
-    @APIAccessLevel(level = {AccessLevel.INTERNAL_IP, AccessLevel.CALLER_LOGIN, AccessLevel.CALLER_NON_LOGIN})
-    public APIResponse getUserDetailsByUserIds(
-            @RequestParam(required = true) List<Integer> userId) throws IOException {
-        List<User> users = userService.getUserWithContactAuthProviderAndAttribute(userId);
-        return new APIResponse(super.filterFields(users, new HashSet<String>()));
+    public APIResponse resetPassword(
+            @RequestParam String email) {
+        Object message = userService.processResetPasswordRequest(email);
+        return new APIResponse(message);
+    }
+    
+    @RequestMapping(value = "app/v1/reset-password", method = RequestMethod.POST, params = {"token"})
+    @ResponseBody
+    public APIResponse resetPasswordUsingToken(
+            @RequestParam String token,
+            @RequestBody ChangePassword changePassword) {
+        CustomUser customUser = userService.resetPasswordUsingToken(token, changePassword);
+        return new APIResponse(customUser);
     }
 
-    @RequestMapping(value = "data/v1/entity/user-details", method = RequestMethod.GET, params = {"email"})
+    @RequestMapping(value = Constants.Security.USER_VALIDATE_API, method = RequestMethod.GET)
     @ResponseBody
-    @APIAccessLevel(level = {AccessLevel.INTERNAL_IP, AccessLevel.CALLER_LOGIN, AccessLevel.CALLER_NON_LOGIN})
-    public APIResponse getUserDetailsByEmail(
-            @RequestParam(required = true) String email) throws IOException {
-        User user = userService.getUserByEmailWithContactAuthProviderAndAttribute(email);
-        return new APIResponse(super.filterFields(user, new HashSet<String>()));
+    public void validateUserCommunicationDetails(
+            @RequestParam UserCommunicationType type,
+            @RequestParam String token,
+            HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+        userService.validateUserCommunicationDetails(type, token);
+        response.sendRedirect(proptigerUrl + "?flag=email_valid");
+    }
+
+    @RequestMapping(value = "app/v1/entity/user/details", method = RequestMethod.PUT)
+    @ResponseBody
+    public APIResponse updateUserDetails(
+            @ModelAttribute(Constants.LOGIN_INFO_OBJECT_NAME) ActiveUser activeUser,
+            @RequestBody UserDetails user) throws IOException {
+        User u = userService.updateUserDetails(user, activeUser);
+        companyUserService.updateLeftRightOfInCompany(user, activeUser);
+        return new APIResponse(userService.getUserDetails(
+                u.getId(),
+                activeUser.getApplicationType(), false));
     }
     
-    @RequestMapping(value = "data/v1/entity/user", method = RequestMethod.POST)
+    @RequestMapping(value = "app/v1/entity/user/child", method = RequestMethod.GET)
     @ResponseBody
-    @APIAccessLevel(level = {AccessLevel.INTERNAL_IP, AccessLevel.CALLER_LOGIN, AccessLevel.CALLER_NON_LOGIN})
-    public APIResponse createOrPatchUser(
-            @RequestBody User user) throws IOException {
-        return new APIResponse(super.filterFields(userService.createOrPatchUser(user), new HashSet<String>()));
+    public APIResponse getChild(
+            @ModelAttribute(Constants.LOGIN_INFO_OBJECT_NAME) ActiveUser activeUser) throws IOException {
+        return new APIResponse(userService.getChildHeirarchy(activeUser));
     }
+
     
 }
