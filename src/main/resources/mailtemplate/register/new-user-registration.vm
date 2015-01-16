@@ -1,0 +1,70 @@
+#parse("./mailtemplate/VM_global_library.vm")
+<html>
+<head>
+<title>PropTiger | New Property Added</title>
+</head>
+<body>
+<table width="600" border="0" cellspacing="0" cellpadding="0" align="center" style="border:1px solid #333;">
+   <tr>
+      <td>
+         <table width="600" border="0" cellspacing="0" cellpadding="0" align="center">
+            <tr>
+               <td width="120"><img src="${IMG_SERVER}images/proptiger_logo.jpg" width="120" height="144" /></td>
+               <td width="456"><img src="${IMG_SERVER}images/header_bg.jpg" width="360" height="144" /></td>
+               <td width="24">
+                  <table width="120" border="0" cellspacing="0" cellpadding="0">
+                     <tr>
+                        <td height="25" bgcolor="#333333" style="font-family:Arial, Helvetica, sans-serif; font-size:14px; color:#fff;">${currentDateTime}</td>
+                     </tr>
+                     <tr>
+                        <td><img src="${IMG_SERVER}images/header_bg_rt.jpg" width="120" height="119" /></td>
+                     </tr>
+                  </table>
+               </td>
+            </tr>
+         </table>
+         <table width="600" border="0" cellspacing="0" cellpadding="0" align="center">
+            <tr>
+               <td width="15" bgcolor="#e3e3e3">&nbsp;</td>
+               <td style="font-family:Arial, Helvetica, sans-serif; font-size:13px; line-height:18px; padding:10px; color:#333;">
+                  Dear ${newregistration.fullName},<br /><br />
+                  Welcome to PropTiger.com! <br /><br />
+                  Thank you for your registration and choosing us as your destination for your dream home.  At 
+                  PropTiger, you can search India’s most preferred New Homes, compare them and purchase 
+                  them in a hassle-free and convenient manner. <br /><br />
+                  For your reference, your user name to sign in on PropTiger.com is the email id ${newregistration.email} that you used while registering. Please click <a style="color:#1155cc; text-decoration:none;" href="${WEBSITE}?flag=email_track" target="_blank">here</a> to visit your account on PropTiger.com.<br /><br />
+                  <strong>Once you log in to your account, you will be able to:</strong><br />
+                  &#8226;  Participate in forums and write reviews,<br />
+                  &#8226;  Add your favourite properties to your wishlist,<br />
+                  &#8226;  Get early information about new launches and offers,<br />
+                  &#8226;  Manage and track your real estate portfolio,<br />
+                  &#8226;  Change your password. <br /><br />
+                  <strong>We Are Here For You!</strong><br />
+                  If you have any questions about your account or any other matter, please feel free to contact us 
+                  at <a href="mailto:support@proptiger.com" style="color:#1155cc; text-decoration:none;">support@proptiger.com</a> - we'd love to help you out!<br /><br />
+                  We thank you for your interest.<br /><br />
+                  Please add <a href="mailto:support@proptiger.com" style="color:#1155cc; text-decoration:none;">support@proptiger.com</a> to your contacts, to easily send and get messages from 
+                  PropTiger.com.<br /><br />
+                  Yours sincerely, <br /><br />
+                  The PropTiger Family<br />
+                  <strong>Web:</strong>  <a style="color:#1155cc; text-decoration:none;" href="https://www.proptiger.com">https://www.proptiger.com</a><br />
+                  <strong>Email:</strong>  <a style="color:#1155cc; text-decoration:none;" href="mailto:customer.service@proptiger.com">customer.service@proptiger.com</a><br />
+                  <strong>Call:</strong> +91 92788 92788 (Mon to Sat, 9AM to 7:30PM. Sun, 10AM to 6:00PM)<br /><br />
+                  <div style="padding-left:40px"><a href="https://www.proptiger.com/property-portfolio-tracker.php?utm_source=internal&utm_medium=email&utm_campaign=my-portfolio&utm_content=newregistration"><img src="{$IMG_SERVER}images/portfolio_tracker_banner.png"/><a></div><br /><br />
+                  <span style="font-size:11px;">** You have received this email because your email id was given to us on our web site. If it was not you, please 
+                  notify us at <a style="color:#1155cc; text-decoration:none;" href="mailto:customer.service@proptiger.com">customer.service@proptiger.com</a>, or report it on <a style="color:#1155cc; text-decoration:none;" href="https://www.proptiger.com/contactus">https://www.proptiger.com/contactus</a></span>
+               </td>
+               <td width="15" bgcolor="#e3e3e3">&nbsp;</td>
+            </tr>
+         </table>
+         <table width="600" border="0" cellspacing="0" cellpadding="0" align="center">
+            <tr>
+               <td bgcolor="#f79633" style="font-family:Arial, Helvetica, sans-serif; font-size:13px; color:#000; text-align:center; padding:5px;">D -12, Ist Floor, Sector 3, Noida 201301 (U.P.) | Help Desk: +91 92788 92788</td>
+            </tr>
+         </table>
+      </td>
+   </tr>
+</table>
+
+</body>
+</html>

@@ -26,19 +26,22 @@ import com.proptiger.core.constants.ResponseCodes;
 import com.proptiger.core.constants.ResponseErrorMessages;
 import com.proptiger.core.dto.internal.ActiveUser;
 import com.proptiger.core.dto.internal.user.CustomUser;
-import com.proptiger.core.dto.internal.user.RegisterUser;
 import com.proptiger.core.dto.internal.user.CustomUser.UserAppDetail;
 import com.proptiger.core.dto.internal.user.CustomUser.UserAppDetail.CustomCity;
 import com.proptiger.core.dto.internal.user.CustomUser.UserAppDetail.CustomLocality;
 import com.proptiger.core.dto.internal.user.CustomUser.UserAppDetail.UserAppSubscription;
+import com.proptiger.core.dto.internal.user.RegisterUser;
 import com.proptiger.core.enums.Application;
 import com.proptiger.core.enums.AuthProvider;
 import com.proptiger.core.enums.DomainObject;
+import com.proptiger.core.enums.MailTemplateDetail;
 import com.proptiger.core.enums.ResourceType;
 import com.proptiger.core.enums.ResourceTypeAction;
 import com.proptiger.core.exception.BadRequestException;
 import com.proptiger.core.exception.ResourceNotAvailableException;
 import com.proptiger.core.exception.UnauthorizedException;
+import com.proptiger.core.internal.dto.mail.MailBody;
+import com.proptiger.core.internal.dto.mail.MailDetails;
 import com.proptiger.core.model.ProjectDiscussionSubscription;
 import com.proptiger.core.model.cms.Company;
 import com.proptiger.core.model.cms.Locality;
@@ -60,6 +63,8 @@ import com.proptiger.core.model.user.UserPreference;
 import com.proptiger.core.pojo.FIQLSelector;
 import com.proptiger.core.repo.ProjectDiscussionSubscriptionDao;
 import com.proptiger.core.repo.UserSubscriptionMappingDao;
+import com.proptiger.core.service.mail.MailSender;
+import com.proptiger.core.service.mail.TemplateToHtmlGenerator;
 import com.proptiger.core.util.Constants;
 import com.proptiger.core.util.DateUtil;
 import com.proptiger.core.util.PropertyKeys;
@@ -158,6 +163,12 @@ public class UserService {
     
     @Autowired
     private DashboardService dashboardService;
+    
+    @Autowired
+    private MailSender mailSender;
+    
+    @Autowired
+    private TemplateToHtmlGenerator htmlGenerator;
     
     public boolean isRegistered(String email) {
         User user = userDao.findByEmail(email);
@@ -475,7 +486,7 @@ public class UserService {
                 */
                 
                 //TODO send mail using notification service
-             /*   MailBody mailBody = htmlGenerator
+               MailBody mailBody = htmlGenerator
                         .generateMailBody(
                                 MailTemplateDetail.NEW_USER_REGISTRATION,
                                 new UserRegisterMailTemplate(
@@ -484,7 +495,7 @@ public class UserService {
                                         ""));
                 MailDetails details = new MailDetails(mailBody).setMailTo(user.getEmail()).setFrom(
                         propertyReader.getRequiredProperty(PropertyKeys.MAIL_FROM_SUPPORT));
-                mailSender.sendMailUsingAws(details);*/
+                mailSender.sendMailUsingAws(details);
             }
             SecurityContextUtils.autoLogin(user);
         }
@@ -516,9 +527,9 @@ public class UserService {
         ResetPasswordTemplateData resetPassword = new ResetPasswordTemplateData(
                 user.getFullName(),
                 retrivePasswordLink.toString());
-//        MailBody mailBody = htmlGenerator.generateMailBody(MailTemplateDetail.RESET_PASSWORD, resetPassword);
-//        MailDetails details = new MailDetails(mailBody).setMailTo(email);
-//        mailSender.sendMailUsingAws(details);
+        MailBody mailBody = htmlGenerator.generateMailBody(MailTemplateDetail.RESET_PASSWORD, resetPassword);
+        MailDetails details = new MailDetails(mailBody).setMailTo(email);
+        mailSender.sendMailUsingAws(details);
         return ResponseErrorMessages.User.PASSWORD_RECOVERY_MAIL_SENT;
     
     }
@@ -742,20 +753,7 @@ public class UserService {
     public User getUserByIdWithRoles(int userId){
         return userDao.findByIdWithRoles(userId);
     }
-    
-    public Map<Integer, Set<UserContactNumber>> getUserContactNumbers(Set<Integer> clientIds) {
-        List<UserContactNumber> userContactNumbers = contactNumberDao.getContactNumbersByUserId(clientIds);
-        Map<Integer, Set<UserContactNumber>> contactNumbersOfUser = new HashMap<>();
-
-        for (UserContactNumber userContactNumber : userContactNumbers) {
-            if (!contactNumbersOfUser.containsValue(userContactNumber.getUserId())) {
-                contactNumbersOfUser.put(userContactNumber.getUserId(), new HashSet<UserContactNumber>());
-            }
-            contactNumbersOfUser.get(userContactNumber.getUserId()).add(userContactNumber);
-        }
-        return contactNumbersOfUser;
-    }
-
+   
     @Transactional
     public List<User> getUserWithContactAuthProviderAndAttribute(Collection<Integer> userIds) {
         if(userIds != null && !userIds.isEmpty()){
@@ -801,23 +799,6 @@ public class UserService {
         return contacts.get(0);
     }
 
-    /**
-     * This method will return the attributes of the user based on the attribute
-     * value provided.
-     * 
-     * @param userId
-     * @param attributeValue
-     * @return
-     */
-    public UserAttribute checkUserAttributesByAttributeValue(int userId, String attributeValue) {
-        return userAttributeDao.findByUserIdAndAttributeValue(userId, attributeValue);
-    }
-
-    public void enrichUserDetails(User user) {
-        user.setContactNumbers(new HashSet<UserContactNumber>(contactNumberDao.findByUserIdOrderByPriorityAsc(user
-                .getId())));
-        user.setAttributes(userAttributeDao.findByUserId(user.getId()));
-    }
 
     /**
      * Mark user communication type as verified for valid token and email

@@ -1,0 +1,6 @@
+#set ($IMG_SERVER = "https://cdn.proptiger.com/")
+#set ($SUPPORT_MAIL_ID = "support@proptiger.com")
+#set ($CUSTOMER_SERVICE_MAIL_ID = "cutomer.service@proptiger.com")
+#set ($HELP_DESK_MOBILE_NO = "+91 92788 92788")
+#set ($ADDRESS_NOIDA_D12 = "D -12, Ist Floor, Sector 3, Noida 201301 (U.P.)")
+#set ($WEBSITE = "https://www.proptiger.com/")

@@ -1,0 +1,7 @@
+Dear ${otp.userName},
+<br /><br />
+<strong>${otp.otp}</strong> is your one time password. It is valid for ${otp.validity} minutes for logging in PropTiger Data Labs portal. 
+If you did not attempt the login that triggered One Time Password please send us email on customer.service-datalabs@proptiger.com
+<br /><br />
+Yours Sincerely,<br />
+Customer Services, PropTiger Data Labs<br />

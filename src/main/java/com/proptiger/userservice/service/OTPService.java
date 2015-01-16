@@ -25,11 +25,14 @@ import com.proptiger.core.constants.ResponseCodes;
 import com.proptiger.core.constants.ResponseErrorMessages;
 import com.proptiger.core.dto.internal.ActiveUser;
 import com.proptiger.core.enums.Application;
+import com.proptiger.core.enums.MailTemplateDetail;
 import com.proptiger.core.enums.notification.MediumType;
 import com.proptiger.core.enums.notification.NotificationTypeEnum;
 import com.proptiger.core.enums.notification.Tokens;
 import com.proptiger.core.exception.BadRequestException;
 import com.proptiger.core.internal.dto.mail.DefaultMediumDetails;
+import com.proptiger.core.internal.dto.mail.MailBody;
+import com.proptiger.core.internal.dto.mail.MailDetails;
 import com.proptiger.core.internal.dto.mail.MediumDetails;
 import com.proptiger.core.model.CompanyIP;
 import com.proptiger.core.model.notification.external.NotificationCreatorServiceRequest;
@@ -39,6 +42,8 @@ import com.proptiger.core.model.user.UserAttribute;
 import com.proptiger.core.pojo.LimitOffsetPageRequest;
 import com.proptiger.core.pojo.response.APIResponse;
 import com.proptiger.core.repo.APIAccessLogDao;
+import com.proptiger.core.service.mail.MailSender;
+import com.proptiger.core.service.mail.TemplateToHtmlGenerator;
 import com.proptiger.core.util.Constants;
 import com.proptiger.core.util.HttpRequestUtil;
 import com.proptiger.core.util.IPUtils;
@@ -84,6 +89,12 @@ public class OTPService {
 
     @Autowired
     private HttpRequestUtil         httpRequestUtil;
+
+    @Autowired
+    private MailSender              mailSender;
+
+    @Autowired
+    private TemplateToHtmlGenerator htmlGenerator;
 
     public boolean isOTPRequired(Authentication auth, HttpServletRequest request) {
         boolean required = false;
@@ -176,13 +187,13 @@ public class OTPService {
         userOTP.setOtp(otp);
         userOTP.setUserId(activeUser.getUserIdentifier());
         userOTPDao.save(userOTP);
-        //TODO send mail using notification service
-//        MailBody mailBody = mailBodyGenerator.generateMailBody(
-//                MailTemplateDetail.OTP,
-//                new OtpMail(activeUser.getFullName(), otp, UserOTP.EXPIRES_IN_MINUTES));
-//        MailDetails mailDetails = new MailDetails(mailBody).setMailTo(activeUser.getUsername()).setMailBCC(
-//                PropertyReader.getRequiredPropertyAsString(PropertyKeys.MAIL_OTP_BCC));
-//        mailSender.sendMailUsingAws(mailDetails);
+        MailBody mailBody = htmlGenerator.generateMailBody(MailTemplateDetail.OTP, new OtpMail(
+                activeUser.getFullName(),
+                otp,
+                UserOTP.EXPIRES_IN_MINUTES));
+        MailDetails mailDetails = new MailDetails(mailBody).setMailTo(activeUser.getUsername()).setMailBCC(
+                PropertyReader.getRequiredPropertyAsString(PropertyKeys.MAIL_OTP_BCC));
+        mailSender.sendMailUsingAws(mailDetails);
 
     }
 
