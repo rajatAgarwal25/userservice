@@ -52,7 +52,6 @@ public class ExternalAPICallService {
         }
         catch (Exception e) {
             logger.error("Exception while getting dashboard of user ", e);
-            ;
         }
         return new ArrayList<Dashboard>();
     }

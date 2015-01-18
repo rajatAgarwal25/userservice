@@ -23,19 +23,10 @@
 		</encoder>
 	</appender>
 
-	<logger name="org.springframework">
-		<level value="ERROR" />
-	</logger>
-	<logger name="org.hibernate">
-		<level value="DEBUG" />
-	</logger>
-	<logger name="org.apache.http">
-		<level value="ERROR" />
-	</logger>
 	<logger name="com.proptiger.userservice">
 		<level value="ERROR" />
 	</logger>
-	<root level="INFO">
+	<root level="ERROR">
 		<appender-ref ref="userservice" />
 		<appender-ref ref="STDOUT" />
 	</root>
